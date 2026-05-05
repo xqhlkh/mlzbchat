@@ -1,0 +1,79 @@
+import { useState } from 'react';
+import { X } from 'lucide-react';
+import type { AppSettings, Provider } from '../types';
+
+interface SettingsPanelProps {
+  settings: AppSettings;
+  onSave: (settings: AppSettings) => void;
+  onClose: () => void;
+}
+
+const PROVIDER_PRESETS: Record<Provider, { label: string; defaultBaseURL: string; defaultModel: string }> = {
+  openai: { label: 'OpenAI 兼容', defaultBaseURL: 'https://api.openai.com/v1', defaultModel: 'gpt-4o' },
+  anthropic: { label: 'Anthropic Claude', defaultBaseURL: 'https://api.anthropic.com', defaultModel: 'claude-sonnet-4-20250514' },
+};
+
+const SEARCH_PROVIDERS = [
+  { value: 'duckduckgo', label: 'DuckDuckGo (免费，无需 API Key)' },
+  { value: 'serpapi', label: 'SerpAPI (Google 搜索结果)' },
+  { value: 'google', label: 'Google Custom Search' },
+];
+
+export function SettingsPanel({ settings, onSave, onClose }: SettingsPanelProps) {
+  const [local, setLocal] = useState<AppSettings>({ ...settings });
+
+  const handleProviderChange = (provider: Provider) => {
+    const preset = PROVIDER_PRESETS[provider];
+    setLocal({ ...local, provider, baseURL: preset.defaultBaseURL, model: preset.defaultModel });
+  };
+
+  return (
+    <div className="settings-overlay" onClick={onClose}>
+      <div className="settings-panel" onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h3 style={{ margin: 0 }}>API 设置</h3>
+          <button className="btn-icon" onClick={onClose}><X size={18} /></button>
+        </div>
+        <div className="form-group">
+          <label>API 提供商</label>
+          <select value={local.provider} onChange={(e) => handleProviderChange(e.target.value as Provider)}>
+            <option value="openai">OpenAI 兼容（支持 DeepSeek、通义千问等）</option>
+            <option value="anthropic">Anthropic Claude</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label>API Key</label>
+          <input type="password" value={local.apiKey} onChange={(e) => setLocal({ ...local, apiKey: e.target.value })} placeholder={local.provider === 'openai' ? 'sk-...' : 'sk-ant-...'} />
+          <div className="hint">你的 API Key 只会存在浏览器本地，不会上传到服务器</div>
+        </div>
+        <div className="form-group">
+          <label>API 地址 (Base URL)</label>
+          <input type="text" value={local.baseURL} onChange={(e) => setLocal({ ...local, baseURL: e.target.value })} placeholder={PROVIDER_PRESETS[local.provider].defaultBaseURL} />
+          <div className="hint">可填写 OpenAI / DeepSeek / 通义千问等兼容接口地址</div>
+        </div>
+        <div className="form-group">
+          <label>模型</label>
+          <input type="text" value={local.model} onChange={(e) => setLocal({ ...local, model: e.target.value })} placeholder={PROVIDER_PRESETS[local.provider].defaultModel} />
+          <div className="hint">例如: gpt-4o, gpt-4-turbo, deepseek-chat, qwen-plus, claude-sonnet-4-20250514</div>
+        </div>
+        <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '20px 0' }} />
+        <div className="form-group">
+          <label>搜索引擎</label>
+          <select value={local.searchProvider} onChange={(e) => setLocal({ ...local, searchProvider: e.target.value })}>
+            {SEARCH_PROVIDERS.map(sp => (<option key={sp.value} value={sp.value}>{sp.label}</option>))}
+          </select>
+          <div className="hint">使用 SerpAPI 或 Google 搜索需要在服务端 .env 中配置对应的 API Key</div>
+        </div>
+        <div className="form-group">
+          <label>系统提示词（可选）</label>
+          <textarea value={local.systemPrompt} onChange={(e) => setLocal({ ...local, systemPrompt: e.target.value })} placeholder="例如：你是一个专业的编程助手，用中文回答..." rows={3} />
+          <div className="hint">自定义 AI 的角色和行为</div>
+        </div>
+        <div className="form-actions">
+          <button className="btn" onClick={onClose}>取消</button>
+          <button className="btn btn-primary" onClick={() => onSave(local)} disabled={!local.apiKey.trim()}>保存设置</button>
+        </div>
+      </div>
+    </div>
+  );
+}
