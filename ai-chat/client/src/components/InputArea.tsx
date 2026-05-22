@@ -51,31 +51,31 @@ export function InputArea({ onSend, onStop, isLoading, uploadedFiles, onFilesUpl
             <div key={i} className="file-chip" style={{ position: 'relative', paddingRight: '28px' }}>
               {file.isImage && file.imageBase64 ? <img src={`data:${file.mimeType};base64,${file.imageBase64}`} alt={file.name} /> : <span>📄</span>}
               <span>{file.name}</span>
-              <button className="btn-icon" style={{ position: 'absolute', right: 0, top: 0, bottom: 0, padding: '2px 4px' }} onClick={() => onRemoveFile(i)}><X size={12} /></button>
+              <button className="btn-icon" style={{ position: 'absolute', right: 2, top: 0, bottom: 0, padding: '2px 4px' }} onClick={() => onRemoveFile(i)}><X size={12} /></button>
             </div>
           ))}
         </div>
       )}
       <div className="input-options">
         <div className={`option-toggle ${settings.enableSearch ? 'active' : ''}`} onClick={() => onSettingsChange({ ...settings, enableSearch: !settings.enableSearch })}>
-          <Globe size={14} /> 联网搜索
+          <Globe size={13} /> 联网搜索
         </div>
         <input ref={fileInputRef} type="file" multiple style={{ display: 'none' }} onChange={(e) => { if (e.target.files) { onFilesUpload(e.target.files); e.target.value = ''; } }} accept=".txt,.md,.csv,.json,.pdf,.docx,.xlsx,.png,.jpg,.jpeg,.gif,.webp" />
         <div className="option-toggle" onClick={() => fileInputRef.current?.click()}>
-          <Paperclip size={14} /> 上传文件
+          <Paperclip size={13} /> 上传文件
         </div>
         <div className="option-toggle" style={{ cursor: 'default', fontSize: '11px', color: 'var(--text-muted)' }}>
-          {settings.provider === 'openai' ? 'OpenAI 兼容' : 'Anthropic'} · {settings.model}
+          {settings.provider === 'openai' ? 'OpenAI' : 'Anthropic'} · {settings.model}
         </div>
       </div>
       <div className="input-container">
         <div className="input-wrapper">
-          <textarea ref={textareaRef} value={input} onChange={handleInput} onKeyDown={handleKeyDown} onPaste={handlePaste} placeholder="输入消息... (Shift+Enter 换行，粘贴图片自动上传)" rows={1} disabled={isLoading} />
+          <textarea ref={textareaRef} value={input} onChange={handleInput} onKeyDown={handleKeyDown} onPaste={handlePaste} placeholder="输入消息... Shift+Enter 换行，粘贴图片自动上传" rows={1} disabled={isLoading} />
           <div className="input-actions">
             {isLoading ? (
-              <button className="btn btn-danger btn-sm" onClick={onStop}><Square size={14} /> 停止</button>
+              <button className="btn btn-danger btn-sm" onClick={onStop}><Square size={13} /> 停止</button>
             ) : (
-              <button className="btn btn-primary btn-sm" onClick={handleSubmit} disabled={!input.trim() && uploadedFiles.length === 0}><Send size={14} /></button>
+              <button className="btn btn-primary btn-sm" onClick={handleSubmit} disabled={!input.trim() && uploadedFiles.length === 0}><Send size={13} /></button>
             )}
           </div>
         </div>

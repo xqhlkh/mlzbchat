@@ -15,11 +15,11 @@ export function MessageList({ messages, isLoading, chatEndRef }: MessageListProp
     return (
       <div className="chat-area">
         <div className="welcome-screen">
-          <h1>🤖 AI 聊天助手</h1>
-          <p>支持 OpenAI 兼容接口和 Anthropic Claude API。可在设置中配置你自己的 API Key、Base URL 和模型。支持联网搜索、文件上传。</p>
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '12px' }}>
+          <h1>AI Chat</h1>
+          <p>支持 OpenAI 兼容接口与 Anthropic Claude，联网搜索，文件上传。</p>
+          <div className="example-chips">
             {['帮我写一段 Python 代码', '解释一下量子计算', '翻译一段英文'].map(ex => (
-              <div key={ex} style={{ padding: '10px 16px', background: 'var(--bg-tertiary)', borderRadius: 'var(--radius-sm)', fontSize: '13px', color: 'var(--text-secondary)', cursor: 'default', border: '1px solid var(--border)' }}>{ex}</div>
+              <div key={ex} className="example-chip">{ex}</div>
             ))}
           </div>
         </div>
@@ -32,7 +32,7 @@ export function MessageList({ messages, isLoading, chatEndRef }: MessageListProp
       {messages.map(msg => (
         <div key={msg.id} className={`message ${msg.role}`}>
           <div className="message-avatar">
-            {msg.role === 'user' ? <User size={18} /> : <Bot size={18} />}
+            {msg.role === 'user' ? <User size={17} /> : <Bot size={17} />}
           </div>
           <div className="message-content">
             {msg.files && msg.files.length > 0 && (
