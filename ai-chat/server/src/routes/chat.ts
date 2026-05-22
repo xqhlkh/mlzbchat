@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import { streamOpenAI, ChatMessage } from '../providers/openai';
 import { streamAnthropic } from '../providers/anthropic';
 import { searchWeb, formatSearchResults } from '../utils/search';
-import { createSession, addMessage, getMessages } from '../utils/session';
+import { createSession, getSession, addMessage, getMessages } from '../utils/session';
 import { config } from '../config';
 
 const router = Router();
@@ -28,7 +28,7 @@ router.post('/completions', async (req: Request, res: Response) => {
     }
 
     let currentSessionId = sessionId;
-    if (!currentSessionId || !getMessages(currentSessionId)) {
+    if (!currentSessionId || !getSession(currentSessionId)) {
       currentSessionId = createSession();
     }
 
@@ -58,6 +58,10 @@ router.post('/completions', async (req: Request, res: Response) => {
 
     addMessage(currentSessionId, { role: 'user', content: userContent });
     const history = getMessages(currentSessionId);
+
+    if (history.length === 0) {
+      return res.status(400).json({ error: '消息处理失败，请刷新页面重试' });
+    }
 
     const messages: ChatMessage[] = [];
     if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
