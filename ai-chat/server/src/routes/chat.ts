@@ -28,7 +28,9 @@ router.post('/completions', async (req: Request, res: Response) => {
     }
 
     let currentSessionId = sessionId;
-    if (!currentSessionId) currentSessionId = createSession();
+    if (!currentSessionId || !getMessages(currentSessionId)) {
+      currentSessionId = createSession();
+    }
 
     const selectedProvider = provider || 'openai';
     const pc = config.providers[selectedProvider as keyof typeof config.providers];
