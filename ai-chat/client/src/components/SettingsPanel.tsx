@@ -15,7 +15,8 @@ const PROVIDER_PRESETS: Record<Provider, { defaultBaseURL: string; defaultModel:
 
 const SEARCH_PROVIDERS = [
   { value: 'duckduckgo', label: 'DuckDuckGo (免费)' },
-  { value: 'serpapi', label: 'SerpAPI' },
+  { value: 'bing', label: 'Bing Search' },
+  { value: 'serpapi', label: 'SerpAPI (Google)' },
   { value: 'google', label: 'Google Custom Search' },
 ];
 

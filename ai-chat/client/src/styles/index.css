@@ -1,4 +1,6 @@
+/* 字体：Inter + 回退字体栈 */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
   --bg-base: #0a0a0f;
@@ -47,7 +49,7 @@
   --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
