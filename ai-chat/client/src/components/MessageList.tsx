@@ -1,13 +1,56 @@
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { User, Bot } from 'lucide-react';
+import { User, Bot, Copy, Check } from 'lucide-react';
+import { useState } from 'react';
 import type { Message } from '../types';
 
 interface MessageListProps {
   messages: Message[];
   isLoading: boolean;
   chatEndRef: React.RefObject<HTMLDivElement>;
+}
+
+function CodeBlock({ language, children }: { language: string; children: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(children);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div style={{ position: 'relative', margin: '12px 0' }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '8px 14px', background: 'rgba(255,255,255,0.05)',
+        borderTopLeftRadius: '8px', borderTopRightRadius: '8px',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        fontSize: '12px', color: 'var(--text-muted)',
+      }}>
+        <span>{language || 'code'}</span>
+        <button onClick={handleCopy} style={{
+          background: 'none', border: 'none', color: 'var(--text-muted)',
+          cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px',
+        }}>
+          {copied ? <><Check size={12} /> 已复制</> : <><Copy size={12} /> 复制</>}
+        </button>
+      </div>
+      <SyntaxHighlighter
+        style={oneDark}
+        language={language || 'text'}
+        PreTag="div"
+        customStyle={{
+          margin: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0,
+          borderRadius: '0 0 8px 8px', padding: '14px 16px',
+          fontSize: '13px', lineHeight: '1.6',
+        }}
+      >
+        {children}
+      </SyntaxHighlighter>
+    </div>
+  );
 }
 
 export function MessageList({ messages, isLoading, chatEndRef }: MessageListProps) {
@@ -47,15 +90,33 @@ export function MessageList({ messages, isLoading, chatEndRef }: MessageListProp
             )}
             {msg.role === 'assistant' && msg.content ? (
               <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
                 components={{
                   code({ className, children, ...props }) {
                     const match = /language-(\w+)/.exec(className || '');
                     const codeStr = String(children).replace(/\n$/, '');
-                    if (!match && !codeStr.includes('\n')) return <code className={className} {...props}>{children}</code>;
-                    return <SyntaxHighlighter style={oneDark} language={match ? match[1] : ''} PreTag="div">{codeStr}</SyntaxHighlighter>;
+                    const isInline = !match && !codeStr.includes('\n');
+
+                    if (isInline) {
+                      return <code className={className} {...props}>{children}</code>;
+                    }
+
+                    return <CodeBlock language={match ? match[1] : ''} children={codeStr} />;
+                  },
+                  table({ children }) {
+                    return (
+                      <div style={{ overflowX: 'auto', margin: '12px 0' }}>
+                        <table>{children}</table>
+                      </div>
+                    );
+                  },
+                  a({ href, children }) {
+                    return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>;
                   },
                 }}
-              >{msg.content}</ReactMarkdown>
+              >
+                {msg.content}
+              </ReactMarkdown>
             ) : (
               <p style={{ whiteSpace: 'pre-wrap' }}>{msg.content || '...'}</p>
             )}

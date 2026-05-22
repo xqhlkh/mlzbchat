@@ -20,7 +20,8 @@ export const config = {
     serpApiKey: process.env.SERPAPI_KEY || '',
     googleApiKey: process.env.GOOGLE_API_KEY || '',
     googleCx: process.env.GOOGLE_CX || '',
-    searchProvider: (process.env.SEARCH_PROVIDER || 'duckduckgo') as 'serpapi' | 'google' | 'duckduckgo',
+    bingApiKey: process.env.BING_API_KEY || '',
+    searchProvider: (process.env.SEARCH_PROVIDER || 'duckduckgo') as 'serpapi' | 'google' | 'bing' | 'duckduckgo',
     maxResults: 5,
   },
   upload: {
