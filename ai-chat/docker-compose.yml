@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  ai-chat:
+    build: .
+    container_name: ai-chat
+    ports:
+      - "3000:3000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+      - NODE_ENV=production
+    env_file:
+      - server/.env
+    volumes:
+      - /tmp/ai-chat-uploads:/tmp/ai-chat-uploads
+    restart: unless-stopped
